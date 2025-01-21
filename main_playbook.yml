@@ -1,0 +1,10 @@
+---
+- name: Setup after new install
+  hosts: homeserver
+  become: true
+
+  roles:
+    - wifi_setup
+    - remove_repo
+    - basics
+    - laptop_lid_disable

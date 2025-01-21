@@ -1,0 +1,5 @@
+---
+- name: Install wpasupplicant using apt
+  apt:
+    name: wpasupplicant
+    state: present
