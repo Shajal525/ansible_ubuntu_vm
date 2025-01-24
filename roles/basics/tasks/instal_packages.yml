@@ -1,0 +1,7 @@
+---
+- name: Ensure ansible is installed
+  apt:
+    name:
+      - vim
+    state: present
+    update_cache: true

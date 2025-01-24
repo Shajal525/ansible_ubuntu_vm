@@ -1,10 +1,8 @@
 ---
 - name: Setup after new install
-  hosts: homeserver
+  hosts: pvemain
   become: true
 
   roles:
-    - wifi_setup
-    - remove_repo
     - basics
-    - laptop_lid_disable
+
