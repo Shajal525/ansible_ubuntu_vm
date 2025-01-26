@@ -1,16 +1,17 @@
 ---
-- name: Setup after new install
-  hosts: nasvm
-  become: true
-  gather_facts: yes
+# - name: Setup after new install
+#   hosts: nasvm
+#   become: true
+#   gather_facts: yes
 
-  roles:
-    - basics
-    - docker
+#   roles:
+#     - basics
+#     - docker
 
 - name: Install Portainer
   hosts: nasvm
   gather_facts: false
 
   roles:
-    - install_portainer
+    # - install_portainer
+    - install_nextcloud

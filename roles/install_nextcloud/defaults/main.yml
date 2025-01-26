@@ -1,0 +1,9 @@
+---
+nextcloud_version: "25.0.0"
+nextcloud_directory: "/mnt/pendrive1/"
+db_root_password: "{{ vm_password }}"
+db_user: "{{ vm_username }}"
+db_password: "{{ vm_password }}"
+db_name: "nextcloud"
+redis_password: "{{ vm_password }}"
+nextcloud_port: 8080

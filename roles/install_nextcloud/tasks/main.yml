@@ -1,0 +1,45 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create Nextcloud data directory
+  file:
+    path: "{{ nextcloud_directory }}data"
+    state: directory
+    owner: "{{ vm_username }}"
+    group: "docker"
+    mode: "0750"
+
+- name: Create Docker Compose file from template
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ nextcloud_directory }}docker-compose.yml"
+
+- name: Check if Nextcloud container is running
+  shell: docker ps -q --filter "name=nextcloud"
+  register: nextcloud_running
+  changed_when: false
+
+- name: Deploy Nextcloud with Redis using Docker Compose
+  shell: |
+    docker-compose up -d
+  args:
+    chdir: "{{ nextcloud_directory }}"
+  when: nextcloud_running.stdout == ""
+
+- name: Wait for Nextcloud to be ready
+  uri:
+    url: "http://{{ vm_ip_address }}:8080"
+    status_code: 200
+    timeout: 60
+  register: nextcloud_status
+  retries: 5
+  delay: 5
+  until: nextcloud_status.status == 200
+
+- name: Display success message
+  debug:
+    msg: "Nextcloud with Redis cache has been successfully deployed!"

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    ports:
+      - "{{ nextcloud_port }}:80"
+    environment:
+      - MYSQL_PASSWORD={{ db_password }}
+      - MYSQL_ROOT_PASSWORD={{ db_root_password }}
+      - MYSQL_DATABASE={{ db_name }}
+      - MYSQL_USER={{ db_user }}
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD={{ redis_password }}
+    volumes:
+      - nextcloud_data:/var/www/html
+    restart: always
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: mysql:5.7
+    container_name: nextcloud_db
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ db_root_password }}
+      - MYSQL_PASSWORD={{ db_password }}
+      - MYSQL_DATABASE={{ db_name }}
+      - MYSQL_USER={{ db_user }}
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+
+  redis:
+    image: redis:alpine
+    container_name: nextcloud_redis
+    command: redis-server --requirepass {{ redis_password }}
+    restart: always
+
+volumes:
+  nextcloud_data:
+  db_data:
