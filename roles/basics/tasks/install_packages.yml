@@ -1,7 +1,7 @@
 ---
-- name: Ensure ansible is installed
+- name: Ensure python3 is installed
   apt:
     name:
-      - vim
+      - python3
     state: present
     update_cache: true
