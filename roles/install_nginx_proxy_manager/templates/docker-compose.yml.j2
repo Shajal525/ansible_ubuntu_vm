@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '{{nginx_http_port}}:80' # Public HTTP Port
+      - '{{nginx_https_port}}:443' # Public HTTPS Port
+      - '{{nginx_web_port}}:81' # Admin Web Port
+    environment:
+      # Mysql/Maria connection parameters:
+      DB_MYSQL_HOST: "db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
+      # Uncomment this if IPv6 is not enabled on your host
+      # DISABLE_IPV6: 'true'
+    volumes:
+      - "{{nginx_directory}}data:/data"
+      - "{{nginx_directory}}letsencrypt:/etc/letsencrypt"
+    depends_on:
+      - db
+
+  db:
+    image: 'jc21/mariadb-aria:latest'
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'npm'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'npm'
+      MARIADB_AUTO_UPGRADE: '1'
+    volumes:
+      - "{{nginx_directory}}mysql:/var/lib/mysql"

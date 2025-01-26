@@ -1,0 +1,5 @@
+---
+nginx_http_port: 50080
+nginx_https_port: 50443
+nginx_web_port: 50081
+nginx_directory: "/mnt/pendrive1/nginx/"

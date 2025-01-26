@@ -1,0 +1,36 @@
+---
+- name: Create Nginx Proxy Manager directory
+  file:
+    path: "{{ nginx_directory }}"
+    state: directory
+    mode: '0755'
+
+- name: Deploy docker-compose.yml for Nginx Proxy Manager
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ nginx_directory }}docker-compose.yml"
+
+- name: Check if Nginx container is running
+  shell: docker ps -q --filter "name=nginx"
+  register: nginx_running
+  changed_when: false
+
+- name: Start Nginx Proxy Manager with Docker Compose
+  command: docker-compose up -d
+  args:
+    chdir: "{{ nginx_directory }}"
+  when: nginx_running.stdout == ""
+
+- name: Wait for Nginx to be ready
+  uri:
+    url: "http://{{ vm_ip_address }}:{{ nginx_web_port }}"
+    status_code: 200
+    timeout: 60
+  register: nginx_status
+  retries: 5
+  delay: 5
+  until: nginx_status.status == 200
+
+- name: Display success message
+  debug:
+    msg: "Nginx has been successfully deployed!"
