@@ -1,0 +1,95 @@
+---
+- name: Check if the tunnel already exists
+  command: cloudflared tunnel list
+  changed_when: false
+  register: tunnel_list_output
+
+- name: Determine if the tunnel exists
+  set_fact:
+    tunnel_exists: "{{ tunnel_name in tunnel_list_output.stdout }}"
+
+- name: Run cloudflared tunnel create command
+  command: cloudflared tunnel create {{ tunnel_name }}
+  register: tunnel_create_output
+  changed_when: true
+  when: not tunnel_exists
+
+- name: debug tunnel_create_output
+  debug:
+    var: tunnel_create_output.stdout
+
+- name: Set the UUID and json file location
+  set_fact:
+    tunnel_id: "{{ tunnel_create_output.stdout | regex_search('Created tunnel .*with id (\\S+)', '\\1') | first }}"
+  when: not tunnel_exists
+
+- name: Get tunnel list
+  command: cloudflared tunnel list
+  register: tunnel_list_output
+  changed_when: false
+
+- name: Extract tunnel ID
+  set_fact:
+    tunnel_id: "{{ tunnel_list_output.stdout |  regex_search('.*' + tunnel_name, multiline=True) | regex_search('(^\\S+)') }}"
+  
+- name: Debug tunnel ID
+  debug:
+    msg: "The tunnel ID for {{ tunnel_name }} is {{ tunnel_id }}"
+  
+- name: Fail if tunnel ID not found
+  fail:
+    msg: "Tunnel ID for {{ tunnel_name }} not found!"
+  when: tunnel_id is not defined or tunnel_id == ""
+
+- name: debug tunnel ID
+  debug:
+    var: tunnel_id
+
+- name: Set the path for the JSON credentials file
+  set_fact:
+    tunnel_json_file: "/root/.cloudflared/{{ tunnel_id }}.json"
+
+- name: Create config file with tunnel UUID and json file path
+  copy:
+    dest: /root/.cloudflared/config.yml
+    content: |
+      tunnel: {{ tunnel_id }}
+      credentials-file: {{ tunnel_json_file }}
+      ingress:
+        - hostname: {{ hostname1 }}
+          service: {{ local_service1 }}
+        - hostname: {{ hostname2 }}
+          service: {{ local_service2 }}
+
+        - service: http_status:404
+
+# - name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }} command"
+#   command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }}
+
+# - name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }} command"
+#   command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }}
+
+- name: Check if cloudflared service file exists
+  stat:
+    path: /etc/systemd/system/cloudflared.service
+  register: service_file_status
+
+- name: debug service_file_status
+  debug:
+    var: service_file_status.stat.exists
+
+- name: Ensure /etc/cloudflared/config.yml is absent
+  file:
+    path: /etc/cloudflared/config.yml
+    state: absent
+  when: not service_file_status.stat.exists
+
+- name: Run cloudflared service install if not already installed
+  command: cloudflared service install
+  when: not service_file_status.stat.exists
+
+- name: Run cloudflared tunnel run as serrvice
+  command: systemctl restart cloudflared
+  changed_when: true
+  when: service_file_status.stat.exists
+

@@ -1,0 +1,6 @@
+---
+tunnel_name: "cloud_tunnel"
+hostname1: "{{ hostname1 }}"
+local_service1: "{{ local_service1 }}"
+hostname2: "{{ hostname2 }}"
+local_service2: "{{ local_service2 }}"

@@ -1,0 +1,54 @@
+---
+- name: Ensure the directory for Cloudflare keyrings exists
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Check if Cloudflare GPG key exists
+  stat:
+    path: /usr/share/keyrings/cloudflare-main.gpg
+  register: gpg_key_check
+
+- name: Download and add the Cloudflare GPG key
+  shell:
+    cmd: "curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null"
+  when: not gpg_key_check.stat.exists
+
+- name: Check if Cloudflare APT repository is configured
+  stat:
+    path: /etc/apt/sources.list.d/cloudflared.list
+  register: repo_check
+
+- name: Add Cloudflare APT repository
+  shell:
+    cmd: "echo \"deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main\" | tee /etc/apt/sources.list.d/cloudflared.list"
+  when: not repo_check.stat.exists
+
+- name: Update APT cache
+  apt:
+    update_cache: yes
+  when: not repo_check.stat.exists
+
+- name: Install Cloudflare Tunnel
+  apt:
+    name: cloudflared
+    state: present
+
+- name: Check if cloudflared is installed
+  shell:
+    cmd: "cloudflared --version"
+  register: cloudflared_check
+  failed_when: cloudflared_check.rc != 0
+  changed_when: false
+
+- name: Debug cloudflared installation status
+  debug:
+    msg: "Cloudflared is installed: {{ cloudflared_check.stdout }}"
+  when: cloudflared_check.rc == 0
+
+- name: Fail if cloudflared is not installed
+  fail:
+    msg: "Cloudflared installation was not successful."
+  when: cloudflared_check.rc != 0
+
