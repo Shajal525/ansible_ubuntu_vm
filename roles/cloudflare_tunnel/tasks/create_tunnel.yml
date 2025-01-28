@@ -63,11 +63,11 @@
 
         - service: http_status:404
 
-# - name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }} command"
-#   command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }}
+- name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }} command"
+  command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }}
 
-# - name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }} command"
-#   command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }}
+- name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }} command"
+  command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }}
 
 - name: Check if cloudflared service file exists
   stat:
