@@ -5,13 +5,29 @@
     state: started
     enabled: yes
 
+- name: Create Nextcloud directory
+  file:
+    path: "{{ nextcloud_directory }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+
 - name: Create Nextcloud data directory
   file:
     path: "{{ nextcloud_directory }}data"
     state: directory
-    owner: "{{ vm_username }}"
-    group: "docker"
-    mode: "0750"
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  
+- name: Create Nextcloud db_data directory
+  file:
+    path: "{{ nextcloud_directory }}db_data"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
 
 - name: Create Docker Compose file from template
   template:

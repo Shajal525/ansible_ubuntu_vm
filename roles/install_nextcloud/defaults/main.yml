@@ -6,4 +6,6 @@ db_user: "{{ vm_username }}"
 db_password: "{{ vm_password }}"
 db_name: "nextcloud"
 redis_password: "{{ vm_password }}"
-nextcloud_port: 8080
+nextcloud_port: 9090
+ssl_cert_dir: "/etc/ssl/openssl/certs"
+domain: shajalslab.top

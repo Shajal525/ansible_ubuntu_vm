@@ -7,14 +7,16 @@ services:
     ports:
       - "{{ nextcloud_port }}:80"
     environment:
-      - MYSQL_PASSWORD={{ db_password }}
+      - MYSQL_HOST=db
       - MYSQL_ROOT_PASSWORD={{ db_root_password }}
-      - MYSQL_DATABASE={{ db_name }}
       - MYSQL_USER={{ db_user }}
+      - MYSQL_PASSWORD={{ db_password }}
+      - MYSQL_DATABASE={{ db_name }}
       - REDIS_HOST=redis
       - REDIS_HOST_PASSWORD={{ redis_password }}
+      - NEXTCLOUD_TRUSTED_DOMAINS={{vm_ip_address}} {{domain}} www.{{domain}} *.{{domain}}
     volumes:
-      - nextcloud_data:/var/www/html
+      - {{nextcloud_directory}}data:/var/www/html
     restart: always
     depends_on:
       - db
@@ -29,7 +31,7 @@ services:
       - MYSQL_DATABASE={{ db_name }}
       - MYSQL_USER={{ db_user }}
     volumes:
-      - db_data:/var/lib/mysql
+      - {{nextcloud_directory}}db_data:/var/lib/mysql
     restart: always
 
   redis:
@@ -38,6 +40,3 @@ services:
     command: redis-server --requirepass {{ redis_password }}
     restart: always
 
-volumes:
-  nextcloud_data:
-  db_data:
