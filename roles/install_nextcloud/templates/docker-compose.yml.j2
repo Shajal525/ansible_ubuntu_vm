@@ -4,8 +4,6 @@ services:
   nextcloud:
     image: nextcloud:latest
     container_name: nextcloud
-    ports:
-      - "{{ nextcloud_port }}:80"
     environment:
       - MYSQL_HOST=db
       - MYSQL_ROOT_PASSWORD={{ db_root_password }}
@@ -23,7 +21,7 @@ services:
       - redis
 
   db:
-    image: mysql:5.7
+    image: mariadb:latest
     container_name: nextcloud_db
     environment:
       - MYSQL_ROOT_PASSWORD={{ db_root_password }}
@@ -40,3 +38,15 @@ services:
     command: redis-server --requirepass {{ redis_password }}
     restart: always
 
+  proxy:
+    image: nginx:latest
+    container_name: nextcloud_proxy
+    restart: always
+    ports:
+      - "{{nextcloud_port}}:443"
+    volumes:
+      - "{{nextcloud_directory}}nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "{{ssl_cert_dir}}server.crt:/etc/nginx/ssl/server.crt:ro"
+      - "{{ssl_cert_dir}}server.key:/etc/nginx/ssl/server.key:ro"
+    depends_on:
+      - nextcloud

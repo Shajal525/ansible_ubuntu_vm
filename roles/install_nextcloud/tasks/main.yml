@@ -29,10 +29,23 @@
     group: "www-data"
     mode: "0755"
 
+- name: Create Nextcloud nginx directory
+  file:
+    path: "{{ nextcloud_directory }}nginx"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+
 - name: Create Docker Compose file from template
   template:
     src: templates/docker-compose.yml.j2
     dest: "{{ nextcloud_directory }}docker-compose.yml"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/nginx.conf.j2
+    dest: "{{ nextcloud_directory }}nginx.conf"
 
 - name: Check if Nextcloud container is running
   shell: docker ps -q --filter "name=nextcloud"
@@ -48,7 +61,7 @@
 
 - name: Wait for Nextcloud to be ready
   uri:
-    url: "http://{{ vm_ip_address }}:{{ nextcloud_port }}"
+    url: "https://{{ vm_ip_address }}:{{ nextcloud_port }}"
     status_code: 200
     timeout: 60
   register: nextcloud_status
