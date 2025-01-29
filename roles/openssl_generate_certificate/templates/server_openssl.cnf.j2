@@ -1,0 +1,18 @@
+[ req ]
+distinguished_name = req_distinguished_name
+req_extensions = v3_req
+prompt = no
+
+[ req_distinguished_name ]
+CN = {{ server_cn }}
+
+[ v3_req ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+{% for dns in server_dns_names %}
+DNS.{{ loop.index }} = {{ dns }}
+{% endfor %}
+{% for ip in server_ip_addresses %}
+IP.{{ loop.index }} = {{ ip }}
+{% endfor %}

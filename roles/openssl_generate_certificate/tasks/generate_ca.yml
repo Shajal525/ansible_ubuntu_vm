@@ -1,0 +1,32 @@
+---
+- name: Ensure CA certificate directories exist
+  file:
+    path: "{{ ca_cert_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure password file exists with secure permissions
+  file:
+    path: "{{ password_file }}"
+    state: touch
+  changed_when: false
+
+- name: Generate Encrypted CA Private Key (AES-256)
+  shell: |
+    openssl genpkey -algorithm RSA -aes256 -pass file:{{ password_file }} -out {{ ca_key }} -pkeyopt rsa_keygen_bits:4096
+  args:
+    creates: "{{ ca_key }}"
+
+
+- name: Generate CA Certificate
+  shell: |
+    openssl req -x509 -new -nodes -key {{ ca_key }} -passin file:{{ password_file }} \
+    -sha256 -days {{ ca_validity_days }} -subj "/CN=Sjl Custom CA" -out {{ ca_crt }}
+  args:
+    creates: "{{ ca_crt }}"
+
+- name: Display generated certificates
+  debug:
+    msg:
+      - "CA Certificate (valid for {{ ca_validity_days }} days): {{ ca_crt }}"
+

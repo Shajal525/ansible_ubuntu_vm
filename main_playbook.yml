@@ -1,11 +1,19 @@
 ---
-# - name: Setup after new install
+- name: Update and generate SSL files
+  hosts: nasvm
+  become: true
+  gather_facts: false
+
+  roles:
+    # - basics
+    - openssl_generate_certificate
+
+# - name: Install docker
 #   hosts: nasvm
 #   become: true
 #   gather_facts: yes
 
 #   roles:
-#     - basics
 #     - docker
 
 # - name: Install Portainer, Nextcloud, Nginx
@@ -17,10 +25,10 @@
 #     - install_nextcloud
 #     - install_nginx_proxy_manager
 
-- name: Install Cloudflare
-  hosts: nasvm
-  become: true
-  gather_facts: false
+# - name: Install Cloudflare
+#   hosts: nasvm
+#   become: true
+#   gather_facts: false
 
-  roles:
-    - cloudflare_tunnel
+#   roles:
+#     - cloudflare_tunnel

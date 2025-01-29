@@ -1,0 +1,40 @@
+---
+- name: Ensure SSL certificate directories exist
+  file:
+    path: "{{ ssl_cert_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Generate Server Private Key
+  shell: |
+    openssl genpkey -algorithm RSA -out {{ server_key }} -pkeyopt rsa_keygen_bits:4096
+  args:
+    creates: "{{ server_key }}"
+
+- name: Generate Server CSR
+  shell: |
+    openssl req -new -sha256 -key {{ server_key }} -subj "/CN={{ server_cn }}" -out {{ server_csr }}
+  args:
+    creates: "{{ server_csr }}"
+
+- name: Generate OpenSSL Config File for SAN
+  template:
+    src: "templates/server_openssl.cnf.j2"
+    dest: "{{ server_openssl_config }}"
+    mode: "0644"
+  args:
+    force: no 
+
+- name: Sign Server Certificate with CA
+  shell: |
+    openssl x509 -req -in {{ server_csr }} -CA {{ ca_crt }} -CAkey {{ ca_key }} -passin file:{{ password_file }} \
+        -CAcreateserial -out {{ server_crt }} -days {{ server_validity_days }} -sha256 -extfile {{ server_openssl_config }} -extensions v3_req
+  args:
+    creates: "{{ server_crt }}"
+
+- name: Display generated certificates
+  debug:
+    msg:
+      - "Server Certificate (valid for {{ server_validity_days }} days): {{ server_crt }}"
+      - "Server Private Key: {{ server_key }}"
+
