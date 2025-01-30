@@ -16,20 +16,20 @@
 #   roles:
 #     - docker
 
-- name: Install Portainer, Nextcloud, Nginx
-  hosts: nasvm
-  become: true
-  gather_facts: false
-
-  roles:
-    # - install_portainer
-    # - install_nextcloud
-    - install_nginx_proxy_manager
-
-# - name: Install Cloudflare
+# - name: Install Portainer, Nextcloud, Nginx
 #   hosts: nasvm
 #   become: true
 #   gather_facts: false
 
 #   roles:
-#     - cloudflare_tunnel
+#     # - install_portainer
+#     # - install_nextcloud
+#     - install_nginx_proxy_manager
+
+- name: Install Cloudflare
+  hosts: nasvm
+  become: true
+  gather_facts: false
+
+  roles:
+    - cloudflare_tunnel

@@ -58,8 +58,12 @@
       ingress:
         - hostname: {{ hostname1 }}
           service: {{ local_service1 }}
+          originRequest:
+            noTLSVerify: true
         - hostname: {{ hostname2 }}
           service: {{ local_service2 }}
+          originRequest:
+            noTLSVerify: true
 
         - service: http_status:404
 
