@@ -1,5 +1,6 @@
 ---
-nginx_http_port: 80
-nginx_https_port: 443
-nginx_web_port: 81
-nginx_directory: "/mnt/pendrive1/nginx/"
+nginx_directory: "/tmp/nginx/"
+nextcloud_port: 9001
+portainer_port: 9000
+ssl_cert_dir: "/etc/ssl/openssl/certs/"
+

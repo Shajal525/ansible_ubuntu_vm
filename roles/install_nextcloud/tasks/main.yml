@@ -61,8 +61,8 @@
 
 - name: Wait for Nextcloud to be ready
   uri:
-    url: "https://{{ vm_ip_address }}:{{ nextcloud_port }}"
-    status_code: 200
+    url: "http://{{ vm_ip_address }}:{{ nextcloud_port }}"
+    status_code: 301
     timeout: 60
   register: nextcloud_status
   retries: 5

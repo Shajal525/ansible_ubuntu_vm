@@ -6,7 +6,7 @@ http {
     server {
         listen 80;
         server_name {{ vm_ip_address }};
-        return 301 https://$host:{{nextcloud_port}}$request_uri;
+        return 301 https://$host$request_uri;
     }
 
     server {
@@ -22,11 +22,23 @@ http {
 
         # Security Headers
         add_header Strict-Transport-Security "max-age=15552000; includeSubDomains; preload" always;
-        add_header Content-Security-Policy "form-action 'self' https://{{ vm_ip_address }}:{{ nextcloud_port }}" always; 
+        # add_header Content-Security-Policy "form-action 'self' https://{{ vm_ip_address }}:{{ portainer_port }}" always; 
+
+    
+
+        location /portainer/ {
+            proxy_pass http://{{ vm_ip_address }}:{{portainer_port}}/;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Ssl on;
+            proxy_set_header X-Forwarded-Port $server_port;
+        }
 
         # Proxy to Nextcloud
-        location / {
-            proxy_pass http://nextcloud:80;
+        location /nextcloud/ {
+            proxy_pass http://{{ vm_ip_address }}:{{nextcloud_port}};
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

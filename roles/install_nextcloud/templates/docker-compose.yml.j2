@@ -1,27 +1,8 @@
 version: '3.8'
 
 services:
-  nextcloud:
-    image: nextcloud:latest
-    container_name: nextcloud
-    environment:
-      - MYSQL_HOST=db
-      - MYSQL_ROOT_PASSWORD={{ db_root_password }}
-      - MYSQL_USER={{ db_user }}
-      - MYSQL_PASSWORD={{ db_password }}
-      - MYSQL_DATABASE={{ db_name }}
-      - REDIS_HOST=redis
-      - REDIS_HOST_PASSWORD={{ redis_password }}
-      - NEXTCLOUD_TRUSTED_DOMAINS={{vm_ip_address}} {{domain}} www.{{domain}} *.{{domain}}
-    volumes:
-      - {{nextcloud_directory}}data:/var/www/html
-    restart: always
-    depends_on:
-      - db
-      - redis
-
   db:
-    image: mariadb:latest
+    image: mysql:5.7
     container_name: nextcloud_db
     environment:
       - MYSQL_ROOT_PASSWORD={{ db_root_password }}
@@ -30,6 +11,8 @@ services:
       - MYSQL_USER={{ db_user }}
     volumes:
       - {{nextcloud_directory}}db_data:/var/lib/mysql
+    networks:
+      - nextcloud_network
     restart: always
 
   redis:
@@ -37,6 +20,34 @@ services:
     container_name: nextcloud_redis
     command: redis-server --requirepass {{ redis_password }}
     restart: always
+    networks:
+      - nextcloud_network
+
+  nextcloud:
+    image: nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_PASSWORD={{ db_password }}
+      - MYSQL_ROOT_PASSWORD={{ db_root_password }}
+      - MYSQL_DATABASE={{ db_name }}
+      - MYSQL_USER={{ db_user }}
+      - REDIS_HOST=redis
+      - REDIS_HOST_PASSWORD={{ redis_password }}
+      - NEXTCLOUD_ADMIN_USER={{ nextcloud_username }}
+      - NEXTCLOUD_ADMIN_PASSWORD={{ nextcloud_password }}
+      - NEXTCLOUD_TRUSTED_DOMAINS={{vm_ip_address}} {{domain}} www.{{domain}} *.{{domain}}
+      - NEXTCLOUD_FPM=true
+      - OVERWRITEHOST={{vm_ip_address}}:{{nextcloud_port}}
+      - OVERWRITEPROTOCOL=https
+    volumes:
+      - {{nextcloud_directory}}data:/var/www/html
+    networks:
+      - nextcloud_network
+    restart: always
+    depends_on:
+      - db
+      - redis
 
   proxy:
     image: nginx:latest
@@ -45,8 +56,13 @@ services:
     ports:
       - "{{nextcloud_port}}:443"
     volumes:
-      - "{{nextcloud_directory}}nginx.conf:/etc/nginx/nginx.conf:ro"
-      - "{{ssl_cert_dir}}server.crt:/etc/nginx/ssl/server.crt:ro"
-      - "{{ssl_cert_dir}}server.key:/etc/nginx/ssl/server.key:ro"
+      - "{{nextcloud_directory}}nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ssl_cert_dir}}server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ssl_cert_dir}}server.key:/etc/nginx/ssl/server.key"
     depends_on:
       - nextcloud
+    networks:
+      - nextcloud_network
+
+networks:
+  nextcloud_network:
