@@ -59,15 +59,9 @@
     chdir: "{{ nextcloud_directory }}"
   when: nextcloud_running.stdout == ""
 
-- name: Wait for Nextcloud to be ready
-  uri:
-    url: "http://{{ vm_ip_address }}:{{ nextcloud_port }}"
-    status_code: 301
-    timeout: 60
-  register: nextcloud_status
-  retries: 5
-  delay: 5
-  until: nextcloud_status.status == 200
+- name: Wait 60 seconds
+  pause:
+    seconds: 60
 
 - name: Display success message
   debug:

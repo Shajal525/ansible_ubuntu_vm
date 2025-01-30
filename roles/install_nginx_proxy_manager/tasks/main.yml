@@ -20,21 +20,15 @@
   register: nginx_running
   changed_when: false
 
-- name: Start Nginx Proxy Manager with Docker Compose
+- name: Start Nginx with Docker Compose
   command: docker-compose up -d
   args:
     chdir: "{{ nginx_directory }}"
   when: nginx_running.stdout == ""
 
-- name: Wait for Nginx to be ready
-  uri:
-    url: "https://{{ vm_ip_address }}/portainer"
-    status_code: 200
-    timeout: 60
-  register: nginx_status
-  retries: 5
-  delay: 5
-  until: nginx_status.status == 200
+- name: Wait 15 seconds
+  pause:
+    seconds: 15
 
 - name: Display success message
   debug:
