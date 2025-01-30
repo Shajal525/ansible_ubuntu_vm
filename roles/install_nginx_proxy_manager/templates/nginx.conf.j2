@@ -36,16 +36,8 @@ http {
             proxy_set_header X-Forwarded-Port $server_port;
         }
 
-        # Proxy to Nextcloud
-        location /nextcloud/ {
-            proxy_pass http://{{ vm_ip_address }}:{{nextcloud_port}};
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header X-Forwarded-Ssl on;
-            proxy_set_header X-Forwarded-Port $server_port;
-        }
+        # Proxy to App2
+        
 
         # Serve static files directly
         location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
