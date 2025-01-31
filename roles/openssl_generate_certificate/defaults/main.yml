@@ -6,7 +6,9 @@ ssl_cert_dir: "/etc/ssl/openssl/certs"
 server_key: "{{ ssl_cert_dir }}/server.key"
 server_csr: "{{ ssl_cert_dir }}/server.csr"
 server_crt: "{{ ssl_cert_dir }}/server.crt"
+server_crt_key_bundle: "{{ ssl_cert_dir }}/server_bundle.pem"
 server_openssl_config: "{{ ssl_cert_dir }}/server_openssl.cnf"
+ssl_local_machine_save_path: "/mnt/c/Users/Shajal/ssl_cert/"
 ca_validity_days: 3650
 server_validity_days: 3650
 server_cn: "shajalslab"

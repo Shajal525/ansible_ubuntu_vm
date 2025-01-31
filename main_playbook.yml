@@ -1,12 +1,12 @@
 ---
-# - name: Update and generate SSL files
-#   hosts: nasvm
-#   become: true
-#   gather_facts: false
+- name: Update and generate SSL files
+  hosts: nasvm
+  become: true
+  gather_facts: false
 
-#   roles:
-#     - basics
-#     - openssl_generate_certificate
+  roles:
+    # - basics
+    - openssl_generate_certificate
 
 # - name: Install docker
 #   hosts: nasvm
@@ -16,15 +16,15 @@
 #   roles:
 #     - docker
 
-- name: Install Portainer, Nextcloud, Nginx
-  hosts: nasvm
-  become: true
-  gather_facts: false
+# - name: Install Portainer, Nextcloud, Nginx
+#   hosts: nasvm
+#   become: true
+#   gather_facts: false
 
-  roles:
-    # - install_portainer
-    - install_nextcloud
-    # - install_nginx_proxy_manager
+#   roles:
+#     # - install_portainer
+#     # - install_nextcloud
+#     - install_nginx_proxy_manager
 
 # - name: Install Cloudflare
 #   hosts: nasvm

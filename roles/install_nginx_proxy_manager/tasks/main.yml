@@ -5,6 +5,11 @@
     state: directory
     mode: '0755'
 
+# - name: Deploy docker-compose.yml for Nginx Proxy Manager
+#   template:
+#     src: docker-compose.yml.j2
+#     dest: "{{ nginx_directory }}docker-compose.yml"
+
 - name: Deploy docker-compose.yml for Nginx Proxy Manager
   template:
     src: docker-compose-v2.yml.j2
@@ -26,10 +31,16 @@
     chdir: "{{ nginx_directory }}"
   when: nginx_running.stdout == ""
 
-- name: Wait 15 seconds
-  pause:
-    seconds: 15
+- name: Wait for Nginx to be ready
+  uri:
+    url: "https://{{ vm_ip_address }}/{{ portainer_path }}"
+    status_code: 200
+    timeout: 60
+  register: nginx_status
+  retries: 5
+  delay: 5
+  until: nginx_status.status == 200
 
 - name: Display success message
   debug:
-    msg: "Nginx has been successfully deployed!"
+    msg: "Nginx has been successfully deployed! Default email: admin@example.com Password: changeme"

@@ -1,6 +1,7 @@
 ---
+nginx_web_port: 81
 nginx_directory: "/tmp/nginx/"
-nextcloud_port: 9001
 portainer_port: 9000
+portainer_path: "/portainer/"
 ssl_cert_dir: "/etc/ssl/openssl/certs/"
 

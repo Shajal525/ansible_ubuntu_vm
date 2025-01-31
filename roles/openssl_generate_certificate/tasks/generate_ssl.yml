@@ -32,6 +32,27 @@
   args:
     creates: "{{ server_crt }}"
 
+- name: Create a combined file with cert and key.
+  shell: |
+    cat {{ server_crt }} {{ ca_crt }} >> {{ server_crt_key_bundle }}
+  args:
+    creates: "{{ server_crt_key_bundle }}"
+
+- name: Find all files in ca/ and certs/
+  ansible.builtin.find:
+    paths:
+      - "{{ ca_cert_dir }}"
+      - "{{ ssl_cert_dir }}"
+    file_type: file
+  register: found_files
+
+- name: Fetch ssl files from server to local machine
+  fetch:
+    src: "{{ item.path }}"
+    dest: "{{ ssl_local_machine_save_path }}/"
+    flat: true
+  loop: "{{ found_files.files }}"
+
 - name: Display generated certificates
   debug:
     msg:

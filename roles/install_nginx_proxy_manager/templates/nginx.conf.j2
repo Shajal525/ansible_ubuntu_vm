@@ -26,7 +26,7 @@ http {
 
     
 
-        location /portainer/ {
+        location {{portainer_path}} {
             proxy_pass http://{{ vm_ip_address }}:{{portainer_port}}/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
