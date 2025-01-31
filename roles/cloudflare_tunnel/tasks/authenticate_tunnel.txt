@@ -3,7 +3,3 @@ shell: "cloudflared tunnel login"
 This will give an URL.
 Visit the URL and authenticate.
 
-
-Now run "cloudflared tunnel create <NAME>"
-shell: cloudflared tunnel create cloud_tunnel
-this will create a file with unique ID

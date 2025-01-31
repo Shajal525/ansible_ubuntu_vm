@@ -36,9 +36,8 @@ services:
       - REDIS_HOST_PASSWORD={{ redis_password }}
       - NEXTCLOUD_ADMIN_USER={{ nextcloud_username }}
       - NEXTCLOUD_ADMIN_PASSWORD={{ nextcloud_password }}
-      - NEXTCLOUD_TRUSTED_DOMAINS={{vm_ip_address}} {{domain}} www.{{domain}} *.{{domain}}
+      - NEXTCLOUD_TRUSTED_DOMAINS={{vm_ip_address}} {{domain}}
       - NEXTCLOUD_FPM=true
-      - OVERWRITEHOST={{vm_ip_address}}:{{nextcloud_port}}
       - OVERWRITEPROTOCOL=https
     volumes:
       - {{nextcloud_directory}}data:/var/www/html

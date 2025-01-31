@@ -88,6 +88,10 @@
     state: absent
   when: not service_file_status.stat.exists
 
+- name: Run daemon-reload
+  command: systemctl daemon-reload
+  when: not service_file_status.stat.exists
+
 - name: Run cloudflared service install if not already installed
   command: cloudflared service install
   when: not service_file_status.stat.exists

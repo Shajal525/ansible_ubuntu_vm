@@ -9,6 +9,6 @@ db_name: "nextcloud"
 redis_password: "{{ vm_password }}"
 nextcloud_port: 9001
 ssl_cert_dir: "/etc/ssl/openssl/certs/"
-domain: shajalslab.top
+domain: nextcloud.shajalslab.top
 nextcloud_username: "{{ vm_username }}"
 nextcloud_password: "{{ vm_password }}"

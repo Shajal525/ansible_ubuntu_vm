@@ -5,13 +5,13 @@ events {
 http {
     server {
         listen 80;
-        server_name {{ vm_ip_address }};
-        return 301 https://$host:{{nextcloud_port}}$request_uri;
+        server_name {{ domain }};
+        return 301 https://$host:$server_port$request_uri;
     }
 
     server {
         listen 443 ssl;
-        server_name {{ vm_ip_address }};
+        server_name {{ domain }};
 
         ssl_certificate /etc/nginx/ssl/server.crt;
         ssl_certificate_key /etc/nginx/ssl/server.key;
@@ -22,12 +22,12 @@ http {
 
         # Security Headers
         add_header Strict-Transport-Security "max-age=15552000; includeSubDomains; preload" always;
-        add_header Content-Security-Policy "form-action 'self' https://{{ vm_ip_address }}:{{ nextcloud_port }}" always; 
+        add_header Content-Security-Policy "form-action 'self' https://{{ domain }} https://{{vm_ip_address}};" always; 
 
         # Proxy to Nextcloud
         location / {
             proxy_pass http://nextcloud:80;
-            proxy_set_header Host $host;
+            proxy_set_header Host $http_host;
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
