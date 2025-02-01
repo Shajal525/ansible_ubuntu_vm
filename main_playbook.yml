@@ -25,6 +25,7 @@
     # - install_portainer
     # - install_nextcloud
     # - install_immich
-    - install_nginx_proxy_manager
+    - install_syncthing
+    # - install_nginx_proxy_manager
     # - cloudflare_tunnel
 

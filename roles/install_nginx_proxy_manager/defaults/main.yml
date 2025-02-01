@@ -5,5 +5,7 @@ portainer_port: 9000
 portainer_path: "/portainer/"
 immich_port: 2283
 # immich_path: "/immich/" # Immich does not work on subdirectory
+syncthing_port: 9002
+syncthing_path: "/syncthing/"
 ssl_cert_dir: "/etc/ssl/openssl/certs/"
 

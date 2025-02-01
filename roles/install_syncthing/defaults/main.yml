@@ -1,0 +1,7 @@
+syncthing_base_path: /tmp/syncthing
+syncthing_data1: "{{ syncthing_base_path }}/data1"
+syncthing_data2: "{{ syncthing_base_path }}/data2"
+syncthing_config: "{{ syncthing_base_path }}/config"
+syncthing_port: 9002
+
+
