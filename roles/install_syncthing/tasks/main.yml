@@ -35,6 +35,9 @@
       - "22000:22000/tcp"
       - "22000:22000/udp"
       - "21027:21027/udp"
+    labels:
+      com.docker.compose.project: "syncthing_stack"
+      com.docker.compose.service: "syncthing"
     restart_policy: unless-stopped
     state: started
 
