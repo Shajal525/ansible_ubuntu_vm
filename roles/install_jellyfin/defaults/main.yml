@@ -1,0 +1,5 @@
+jellyfin_base_path: "/tmp/jellyfin"
+jellyfin_library: "{{ jellyfin_base_path }}/library"
+jellyfin_tvseries: "{{ jellyfin_base_path }}/tvseries"
+jellyfin_movies: "{{ jellyfin_base_path }}/movies"
+jellyfin_port: 9003

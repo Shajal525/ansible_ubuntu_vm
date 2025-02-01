@@ -1,0 +1,47 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create directories for Jellyfin
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ jellyfin_library }}"
+    - "{{ jellyfin_tvseries }}"
+    - "{{ jellyfin_movies }}"
+
+- name: Deploy Jellyfin using Docker Compose
+  docker_container:
+    name: jellyfin
+    image: lscr.io/linuxserver/jellyfin:latest
+    hostname: jellyfin
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "GB"
+      JELLYFIN_PublishedServerUrl: "https://192.168.0.4/jellyfin/" #optional
+    volumes:
+      - "{{ jellyfin_library }}:/config"
+      - "{{ jellyfin_tvseries }}:/data/tvshows"
+      - "{{ jellyfin_movies }}:/data/movies"
+    ports:
+      - "{{ jellyfin_port }}:8096"
+      - "8920:8920" #optional
+      - "7359:7359/udp" #optional
+      - "1900:1900/udp" #optional
+    labels:
+      com.docker.compose.project: "jellyfin_stack"
+      com.docker.compose.service: "jellyfin"
+    restart_policy: unless-stopped
+    state: started
+
+- name: Jellyfin deployed
+  debug:
+    msg: "Jellyfin is running successfully"
