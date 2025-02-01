@@ -6,6 +6,6 @@ immich_compose_dir: "{{ immich_base_path }}/compose"
 db_password: "{{ vm_username }}"
 db_username: "{{ vm_password }}"
 db_database_name: "{{ vm_username }}"
-immich_port: 9002
+immich_port: 2283
 
 

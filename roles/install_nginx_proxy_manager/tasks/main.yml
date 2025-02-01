@@ -33,7 +33,7 @@
 
 - name: Wait for Nginx to be ready
   uri:
-    url: "https://{{ vm_ip_address }}/{{ portainer_path }}"
+    url: "https://{{ vm_ip_address }}"
     status_code: 200
     timeout: 60
   register: nginx_status

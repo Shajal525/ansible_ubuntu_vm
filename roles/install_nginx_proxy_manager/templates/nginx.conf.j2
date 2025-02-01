@@ -27,21 +27,26 @@ http {
 
         # Security Headers
         add_header Strict-Transport-Security "max-age=15552000; includeSubDomains; preload" always;
-        # add_header Content-Security-Policy "form-action 'self' https://{{ vm_ip_address }}:{{ portainer_port }}" always; 
+        # add_header Content-Security-Policy "form-action 'self' https://{{ vm_ip_address }}:{{ portainer_port }} https://{{ vm_ip_address }}:{{ immich_port }}" always; 
 
     
 
         location {{portainer_path}} {
             proxy_pass http://{{ vm_ip_address }}:{{portainer_port}}/;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header X-Forwarded-Ssl on;
-            proxy_set_header X-Forwarded-Port $server_port;
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $scheme;
         }
 
-        # Proxy to App2
+        # Proxy to Immich
+        location / {
+            proxy_pass http://{{ vm_ip_address }}:{{immich_port}}/;
+            proxy_set_header Host               $http_host;
+            proxy_set_header X-Real-IP          $remote_addr;
+            proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto  $scheme;
+        }
         
 
         # Serve static files directly

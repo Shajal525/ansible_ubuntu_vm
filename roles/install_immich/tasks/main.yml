@@ -25,11 +25,12 @@
     group: root
     mode: '0644'
 
-- name: Update Docker Compose file with custom port
-  replace:
-    path: "{{ immich_compose_dir }}/docker-compose.yml"
-    regexp: '2283:2283'
-    replace: '{{ immich_port }}:2283'
+# changing port does not work
+# - name: Update Docker Compose file with custom port
+#   replace:
+#     path: "{{ immich_compose_dir }}/docker-compose.yml"
+#     regexp: '2283:2283'
+#     replace: '{{ immich_port }}:2283'
 
 - name: Remove 'name' field from Docker Compose file
   replace:
@@ -53,6 +54,7 @@
       DB_USERNAME={{ db_username }}
       DB_DATABASE_NAME={{ db_database_name }}
       IMMICH_VERSION={{ immich_version }}
+      IMMICH_PORT={{ immich_port }}
     owner: root
     group: root
     mode: '0644'
