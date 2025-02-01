@@ -1,0 +1,84 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create directories for Immich
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ upload_location }}"
+    - "{{ db_data_location }}"
+    - "{{ immich_compose_dir }}"
+
+- name: Download Immich Docker Compose file
+  get_url:
+    url: "https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml"
+    dest: "{{ immich_compose_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Update Docker Compose file with custom port
+  replace:
+    path: "{{ immich_compose_dir }}/docker-compose.yml"
+    regexp: '2283:2283'
+    replace: '{{ immich_port }}:2283'
+
+- name: Remove 'name' field from Docker Compose file
+  replace:
+    path: "{{ immich_compose_dir }}/docker-compose.yml"
+    regexp: '^name:.*\n'
+    replace: ''
+
+- name: Replace 'start_interval' with 'interval' in database healthcheck
+  replace:
+    path: "{{ immich_compose_dir }}/docker-compose.yml"
+    regexp: '^\\s*start_interval:.*\\n'
+    replace: ''
+
+- name: Create .env file for Immich
+  copy:
+    dest: "{{ immich_compose_dir }}/.env"
+    content: |
+      UPLOAD_LOCATION={{ upload_location }}
+      DB_DATA_LOCATION={{ db_data_location }}
+      DB_PASSWORD={{ db_password }}
+      DB_USERNAME={{ db_username }}
+      DB_DATABASE_NAME={{ db_database_name }}
+      IMMICH_VERSION={{ immich_version }}
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Check if Immich container is running
+  shell: docker ps -q --filter "name=immich_server"
+  register: immich_running
+  changed_when: false
+
+- name: Validate Docker Compose file
+  shell:
+    cmd: docker compose config
+    chdir: "{{ immich_compose_dir }}"
+  register: compose_validation
+  failed_when: compose_validation.rc != 0
+  changed_when: true
+  when: immich_running.stdout == ""
+  
+- name: Restart Docker Compose stack with project name 'immich'
+  shell:
+    cmd: docker compose -p immich up -d
+    chdir: "{{ immich_compose_dir }}"
+  changed_when: true
+  when: immich_running.stdout == ""
+
+- name: Display Immich status
+  debug:
+    msg: "Immich is running successfully"
+

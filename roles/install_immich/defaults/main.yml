@@ -1,0 +1,11 @@
+immich_version: "release"
+immich_base_path: /tmp/immich
+upload_location: "{{ immich_base_path }}/upload"
+db_data_location: "{{ immich_base_path }}/dbdata"
+immich_compose_dir: "{{ immich_base_path }}/compose"
+db_password: "{{ vm_username }}"
+db_username: "{{ vm_password }}"
+db_database_name: "{{ vm_username }}"
+immich_port: 9002
+
+
