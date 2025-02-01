@@ -3,15 +3,20 @@ events {
 }
 
 http {
+    client_max_body_size 50G;
+
     server {
         listen 80;
         server_name {{ domain }};
+        client_max_body_size 50G;
+
         return 301 https://$host:$server_port$request_uri;
     }
 
     server {
         listen 443 ssl;
         server_name {{ domain }};
+        client_max_body_size 50G;
 
         ssl_certificate /etc/nginx/ssl/server.crt;
         ssl_certificate_key /etc/nginx/ssl/server.key;
