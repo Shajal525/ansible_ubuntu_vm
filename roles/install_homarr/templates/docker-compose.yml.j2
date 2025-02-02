@@ -1,0 +1,24 @@
+version: '3'
+services:
+  homarr:
+    image: ghcr.io/homarr-labs/homarr:latest
+    container_name: homarr
+    volumes:
+      - "{{ homarr_config }}/docker.sock:/var/run/docker.sock"
+      - "{{ homarr_data }}:/appdata"
+    environment:
+      SECRET_ENCRYPTION_KEY: "{{ encryption_key.stdout }}"
+    restart: unless-stopped
+
+  nginx_homarr:
+    image: nginx:latest
+    container_name: nginx_homarr
+    volumes:
+      - "{{ homarr_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ homarr_port }}:443"
+    depends_on:
+      - homarr
+    restart: unless-stopped

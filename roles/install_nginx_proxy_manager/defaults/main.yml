@@ -9,6 +9,8 @@ syncthing_port: 9002
 syncthing_path: "/syncthing/"
 jellyfin_port: 9003
 jellyfin_path: "/jellyfin/"
+homarr_port: 9010
+homarr_path: "/homarr/"
 jellyfin_websockets_path: "/jellyfin/socket/"
 ssl_cert_dir: "/etc/ssl/openssl/certs/"
 

@@ -31,16 +31,6 @@
     chdir: "{{ nginx_directory }}"
   when: nginx_running.stdout == ""
 
-- name: Wait for Nginx to be ready
-  uri:
-    url: "https://{{ vm_ip_address }}"
-    status_code: 200
-    timeout: 60
-  register: nginx_status
-  retries: 5
-  delay: 5
-  until: nginx_status.status == 200
-
 - name: Display success message
   debug:
-    msg: "Nginx has been successfully deployed! Default email: admin@example.com Password: changeme"
+    msg: "Nginx has been successfully deployed!"

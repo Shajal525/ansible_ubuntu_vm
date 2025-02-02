@@ -1,0 +1,39 @@
+events {
+    worker_connections 1024;
+}
+
+http {
+    client_max_body_size 50G;
+
+    server {
+        listen 80;
+        server_name {{ homarr_ip }};
+        client_max_body_size 50G;
+
+        return 301 https://$host:$server_port$request_uri;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name {{ homarr_ip }};
+        client_max_body_size 50G;
+
+        ssl_certificate /etc/nginx/ssl/server.crt;
+        ssl_certificate_key /etc/nginx/ssl/server.key;
+
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+            proxy_pass          http://homarr:7575;
+            proxy_set_header    Host                $http_host;
+            proxy_set_header    X-Real-IP           $remote_addr;
+            proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
+            proxy_set_header    X-Forwarded-Proto   $scheme;
+            proxy_set_header    X-Forwarded-Ssl     on;
+            proxy_set_header    X-Forwarded-Port    $server_port;
+        }
+    }
+}
+

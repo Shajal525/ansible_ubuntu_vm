@@ -1,0 +1,59 @@
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create Homarr directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ homarr_config }}"
+    - "{{ homarr_data }}"
+
+- name: Generate SECRET_ENCRYPTION_KEY
+  shell: openssl rand -hex 32
+  register: encryption_key
+  changed_when: false
+
+- name: Debug encryption_key
+  debug:
+    var: encryption_key.stdout
+
+- name: Create Docker Compose file from template
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: "{{ homarr_base_path }}/docker-compose.yml"
+  vars:
+    encryption_key: "{{ encryption_key }}"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/nginx.conf.j2
+    dest: "{{ homarr_config }}/nginx.conf"
+
+
+- name: Check if Homarr container is running
+  shell: docker ps -q --filter "name=homarr"
+  register: homarr_running
+  changed_when: false
+
+- name: Deploy Homarr with Redis using Docker Compose
+  shell: |
+    docker-compose up -d
+  args:
+    chdir: "{{ homarr_base_path }}"
+  when: homarr_running.stdout == ""
+
+- name: Wait 15 seconds
+  pause:
+    seconds: 15
+
+- name: Homarr deployed
+  debug:
+    msg: "Homarr is running successfully"
+
