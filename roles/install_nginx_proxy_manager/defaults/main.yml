@@ -1,4 +1,5 @@
 ---
+ssl_cert_dir: "/etc/ssl/openssl/certs/"
 nginx_web_port: 81
 nginx_directory: "/tmp/nginx/"
 portainer_port: 9000
@@ -7,10 +8,20 @@ immich_port: 2283
 # immich_path: "/immich/" # Immich does not work on subdirectory
 syncthing_port: 9002
 syncthing_path: "/syncthing/"
-jellyfin_port: 9003
-jellyfin_path: "/jellyfin/"
-homarr_port: 9010
-homarr_path: "/homarr/"
 jellyfin_websockets_path: "/jellyfin/socket/"
-ssl_cert_dir: "/etc/ssl/openssl/certs/"
+
+jellyfin_port: 9050
+jellyfin_path: "/jellyfin/"
+sonarr_port: 9051
+sonarr_path: "/sonarr/"
+radarr_port: 9052
+radarr_path: "/radarr/"
+prowlarr_port: 9053
+prowlarr_path: "/prowlarr/"
+qbittorrent_webui_port: 9054
+qbittorrent_webui_path: "/qbittorrent/webui/"
+qbittorrent_torrenting_port: 9055
+qbittorrent_torrenting_path: "/qbittorrent/torrent/"
+lunasea_port: 9060
+lunasea_path: "/lunasea/"
 

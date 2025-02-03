@@ -1,0 +1,42 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create directories for Sonarr
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ sonarr_config }}"
+    - "{{ tvseries_path }}"
+    - "{{ downloads_path }}"
+
+- name: Deploy Sonarr container
+  docker_container:
+    name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "GB"
+    volumes:
+      - "{{ sonarr_config }}:/config"
+      - "{{ tvseries_path }}:/tv"
+      - "{{ downloads_path }}:/downloads"
+    ports:
+      - "{{ sonarr_port }}:8989"
+    labels:
+      com.docker.compose.project: "media_stack"
+      com.docker.compose.service: "sonarr"
+    restart_policy: unless-stopped
+    state: started
+
+- name: Sonarr deployed
+  debug:
+    msg: "Sonarr is running successfully"

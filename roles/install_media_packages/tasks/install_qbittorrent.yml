@@ -1,0 +1,43 @@
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create directories for qBittorrent
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ qbittorrent_config }}"
+    - "{{ downloads_path }}"
+
+- name: Deploy qBittorrent container
+  docker_container:
+    name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "GB"
+      WEBUI_PORT: "{{ qbittorrent_webui_port }}"
+      TORRENTING_PORT: "{{ qbittorrent_torrenting_port }}"
+    volumes:
+      - "{{ qbittorrent_config }}:/config"
+      - "{{ downloads_path }}:/downloads"
+    ports:
+      - "{{ qbittorrent_webui_port }}:8080"
+      - "{{ qbittorrent_torrenting_port }}:6881"
+      - "{{ qbittorrent_torrenting_port }}:6881/udp"
+    labels:
+      com.docker.compose.project: "media_stack"
+      com.docker.compose.service: "qbittorrent"
+    restart_policy: unless-stopped
+    state: started
+
+- name: qBittorrent deployed
+  debug:
+    msg: "qBittorrent is running successfully"

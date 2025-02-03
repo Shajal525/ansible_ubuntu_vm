@@ -1,0 +1,23 @@
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Deploy Lunasea container
+  docker_container:
+    name: lunasea
+    image: ddsderek/lunasea:latest
+    ports:
+      - "{{ lunasea_port }}:80"
+    labels:
+      com.docker.compose.project: "media_stack"
+      com.docker.compose.service: "lunasea"
+    restart_policy: always
+    tty: yes
+    interactive: yes
+    state: started
+
+- name: Lunasea deployed
+  debug:
+    msg: "Lunasea is running successfully"

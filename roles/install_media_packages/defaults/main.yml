@@ -1,5 +1,24 @@
-jellyfin_base_path: "/tmp/jellyfin"
-jellyfin_library: "{{ jellyfin_base_path }}/library"
-jellyfin_tvseries: "{{ jellyfin_base_path }}/tvseries"
-jellyfin_movies: "{{ jellyfin_base_path }}/movies"
-jellyfin_port: 9003
+media_base_path: "/tmp/media"
+tvseries_path: "{{ media_base_path }}/tvseries"
+movies_path: "{{ media_base_path }}/movies"
+downloads_path: "{{ media_base_path }}/movies"
+config_path: "{{ media_base_path }}/config"
+
+jellyfin_config: "{{ config_path }}/jellyfin"
+jellyfin_port: 9050
+
+sonarr_config: "{{ config_path }}/sonarr"
+sonarr_port: 9051
+
+radarr_config: "{{ config_path }}/radarr"
+radarr_port: 9052
+
+prowlarr_config: "{{ config_path }}/prowlarr"
+prowlarr_port: 9053
+
+qbittorrent_config: "{{ config_path }}/qbittorrent"
+qbittorrent_webui_port: "9054"
+qbittorrent_torrenting_port: "9055"
+
+lunasea_port: 9060
+

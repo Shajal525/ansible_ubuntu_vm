@@ -21,7 +21,7 @@
     dest: "{{ nginx_directory }}nginx.conf"
 
 - name: Check if Nginx container is running
-  shell: docker ps -q --filter "name=nginx"
+  shell: docker ps -q --filter "name=nginx_proxy_1"
   register: nginx_running
   changed_when: false
 

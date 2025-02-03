@@ -48,7 +48,7 @@ http {
             proxy_set_header    X-Forwarded-Proto  $scheme;
         }
 
-        # Proxy to Immich
+        # Proxy to Syncthing
         location {{syncthing_path}} {
             proxy_pass          http://{{ vm_ip_address }}:{{syncthing_port}}/;
             proxy_set_header    Host               $http_host;
@@ -89,7 +89,6 @@ http {
             proxy_set_header    X-Forwarded-Protocol    $scheme;
             proxy_set_header    X-Forwarded-Host        $http_host;
         }
-        
 
         # Serve static files directly
         location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
