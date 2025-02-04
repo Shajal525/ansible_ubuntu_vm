@@ -14,8 +14,14 @@
     mode: "0755"
   loop:
     - "{{ radarr_config }}"
+    - "{{ radarr_nginx_config }}"
     - "{{ movies_path }}"
     - "{{ downloads_path }}"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/radarr.nginx.conf.j2
+    dest: "{{ radarr_nginx_config }}/nginx.conf"
 
 - name: Deploy Radarr container
   docker_container:
@@ -30,10 +36,32 @@
       - "{{ movies_path }}:/movies"
       - "{{ downloads_path }}:/downloads"
     ports:
-      - "{{ radarr_port }}:7878"
+      - "7878:7878"
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "radarr"
+    restart_policy: unless-stopped
+    state: started
+
+
+- name: Wait for Radarr to be ready
+  wait_for:
+    port: 7878
+    timeout: 15
+
+- name: Start radarr_nginx container
+  docker_container:
+    name: radarr_nginx
+    image: nginx:latest
+    volumes:
+      - "{{ radarr_nginx_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ radarr_port }}:443"
+    labels:
+      com.docker.compose.project: "media_stack"
+      com.docker.compose.service: "radarr_nginx"
     restart_policy: unless-stopped
     state: started
 

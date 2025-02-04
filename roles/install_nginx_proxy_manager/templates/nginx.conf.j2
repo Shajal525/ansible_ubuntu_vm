@@ -39,15 +39,6 @@ http {
             proxy_set_header    X-Forwarded-Proto  $scheme;
         }
 
-        # Proxy to Immich
-        location / {
-            proxy_pass          http://{{ vm_ip_address }}:{{immich_port}}/;
-            proxy_set_header    Host               $http_host;
-            proxy_set_header    X-Real-IP          $remote_addr;
-            proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
-            proxy_set_header    X-Forwarded-Proto  $scheme;
-        }
-
         # Proxy to Syncthing
         location {{syncthing_path}} {
             proxy_pass          http://{{ vm_ip_address }}:{{syncthing_port}}/;
@@ -58,36 +49,6 @@ http {
 
             proxy_read_timeout  600s;
             proxy_send_timeout  600s;
-        }
-
-        # Proxy for Jellyfin
-        location {{ jellyfin_path }} {
-            # Proxy main Jellyfin traffic
-            proxy_pass          http://{{ vm_ip_address }}:{{ jellyfin_port }}/;
-            proxy_set_header    Host                $http_host;
-            proxy_set_header    X-Real-IP           $remote_addr;
-            proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
-            proxy_set_header    X-Forwarded-Proto   $scheme;
-            proxy_set_header    X-Forwarded-Protocol $scheme;
-            proxy_set_header    X-Forwarded-Host    $http_host;
-
-            # Disable buffering when the nginx proxy gets very resource heavy upon streaming
-            proxy_buffering off;
-        }
-
-        # Jellyfin websocket
-        location {{ jellyfin_websockets_path }} {
-            # Proxy for Jellyfin websockets traffic
-            proxy_pass          http://{{ vm_ip_address }}:{{ jellyfin_port }}/;
-            proxy_http_version  1.1;
-            proxy_set_header    Upgrade                 $http_upgrade;
-            proxy_set_header    Connection              "upgrade";
-            proxy_set_header    Host                    $http_host;
-            proxy_set_header    X-Real-IP               $remote_addr;
-            proxy_set_header    X-Forwarded-For         $proxy_add_x_forwarded_for;
-            proxy_set_header    X-Forwarded-Proto       $scheme;
-            proxy_set_header    X-Forwarded-Protocol    $scheme;
-            proxy_set_header    X-Forwarded-Host        $http_host;
         }
 
         # Serve static files directly

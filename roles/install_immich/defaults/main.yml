@@ -1,11 +1,15 @@
+ssl_cert_dir: "/etc/ssl/openssl/certs"
+ip_address: "{{ vm_ip_address }}"
+
 immich_version: "release"
 immich_base_path: /tmp/immich
 upload_location: "{{ immich_base_path }}/upload"
 db_data_location: "{{ immich_base_path }}/dbdata"
 immich_compose_dir: "{{ immich_base_path }}/compose"
+immich_nginx_config: "{{ immich_base_path }}/nginx"
 db_password: "{{ vm_username }}"
 db_username: "{{ vm_password }}"
 db_database_name: "{{ vm_username }}"
-immich_port: 2283
+immich_port: 9020
 
 

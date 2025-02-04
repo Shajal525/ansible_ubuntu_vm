@@ -1,3 +1,6 @@
+ssl_cert_dir: "/etc/ssl/openssl/certs"
+ip_address: "{{ vm_ip_address }}"
+
 media_base_path: "/tmp/media"
 tvseries_path: "{{ media_base_path }}/tvseries"
 movies_path: "{{ media_base_path }}/movies"
@@ -5,20 +8,25 @@ downloads_path: "{{ media_base_path }}/movies"
 config_path: "{{ media_base_path }}/config"
 
 jellyfin_config: "{{ config_path }}/jellyfin"
+jellyfin_nginx_config: "{{ config_path }}/nginx_jellyfin"
 jellyfin_port: 9050
 
 sonarr_config: "{{ config_path }}/sonarr"
+sonarr_nginx_config: "{{ config_path }}/nginx_sonarr"
 sonarr_port: 9051
 
 radarr_config: "{{ config_path }}/radarr"
+radarr_nginx_config: "{{ config_path }}/nginx_radarr"
 radarr_port: 9052
 
 prowlarr_config: "{{ config_path }}/prowlarr"
+prowlarr_nginx_config: "{{ config_path }}/nginx_prowlarr"
 prowlarr_port: 9053
 
 qbittorrent_config: "{{ config_path }}/qbittorrent"
-qbittorrent_webui_port: "9054"
-qbittorrent_torrenting_port: "9055"
+qbittorrent_nginx_config: "{{ config_path }}/nginx_qbittorrent"
+qbittorrent_webui_port: 9055
 
+lunasea_nginx_config: "{{ config_path }}/nginx_lunasea"
 lunasea_port: 9060
 

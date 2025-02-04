@@ -4,18 +4,52 @@
     state: started
     enabled: yes
 
+- name: Create directories for Lunasea
+  file:
+    path: "{{ lunasea_nginx_config }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/lunasea.nginx.conf.j2
+    dest: "{{ lunasea_nginx_config }}/nginx.conf"
+
 - name: Deploy Lunasea container
   docker_container:
     name: lunasea
     image: ddsderek/lunasea:latest
     ports:
-      - "{{ lunasea_port }}:80"
+      - "8880:80"
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "lunasea"
     restart_policy: always
     tty: yes
     interactive: yes
+    state: started
+
+- name: Wait for Lunasea to be ready
+  wait_for:
+    port: 8880
+    timeout: 15
+
+- name: Start lunasea_nginx container
+  docker_container:
+    name: lunasea_nginx
+    image: nginx:latest
+    volumes:
+      - "{{ lunasea_nginx_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ lunasea_port }}:443"
+    labels:
+      com.docker.compose.project: "media_stack"
+      com.docker.compose.service: "lunasea_nginx"
+    restart_policy: unless-stopped
     state: started
 
 - name: Lunasea deployed

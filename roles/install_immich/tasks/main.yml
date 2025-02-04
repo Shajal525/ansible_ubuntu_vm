@@ -16,6 +16,12 @@
     - "{{ upload_location }}"
     - "{{ db_data_location }}"
     - "{{ immich_compose_dir }}"
+    - "{{ immich_nginx_config }}"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/nginx.conf.j2
+    dest: "{{ immich_nginx_config }}/nginx.conf"
 
 - name: Download Immich Docker Compose file
   get_url:
@@ -24,13 +30,6 @@
     owner: root
     group: root
     mode: '0644'
-
-# changing port does not work
-# - name: Update Docker Compose file with custom port
-#   replace:
-#     path: "{{ immich_compose_dir }}/docker-compose.yml"
-#     regexp: '2283:2283'
-#     replace: '{{ immich_port }}:2283'
 
 - name: Remove 'name' field from Docker Compose file
   replace:
@@ -54,7 +53,6 @@
       DB_USERNAME={{ db_username }}
       DB_DATABASE_NAME={{ db_database_name }}
       IMMICH_VERSION={{ immich_version }}
-      IMMICH_PORT={{ immich_port }}
     owner: root
     group: root
     mode: '0644'
@@ -79,6 +77,28 @@
     chdir: "{{ immich_compose_dir }}"
   changed_when: true
   when: immich_running.stdout == ""
+
+
+- name: Wait for Immich to be ready
+  wait_for:
+    port: 2283
+    timeout: 15
+
+- name: Start immich_nginx container
+  docker_container:
+    name: immich_nginx
+    image: nginx:latest
+    volumes:
+      - "{{ immich_nginx_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ immich_port }}:443"
+    labels:
+      com.docker.compose.project: "immich"
+      com.docker.compose.service: "immich_nginx"
+    restart_policy: unless-stopped
+    state: started
 
 - name: Display Immich status
   debug:

@@ -13,6 +13,12 @@
     mode: "0755"
   loop:
     - "{{ prowlarr_config }}"
+    - "{{ prowlarr_nginx_config }}"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/prowlarr.nginx.conf.j2
+    dest: "{{ prowlarr_nginx_config }}/nginx.conf"
 
 - name: Deploy Prowlarr container
   docker_container:
@@ -25,10 +31,32 @@
     volumes:
       - "{{ prowlarr_config }}:/config"
     ports:
-      - "{{ prowlarr_port }}:9696"
+      - "9696:9696"
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "prowlarr"
+    restart_policy: unless-stopped
+    state: started
+
+
+- name: Wait for Prowlarr to be ready
+  wait_for:
+    port: 9696
+    timeout: 15
+
+- name: Start prowlarr_nginx container
+  docker_container:
+    name: prowlarr_nginx
+    image: nginx:latest
+    volumes:
+      - "{{ prowlarr_nginx_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ prowlarr_port }}:443"
+    labels:
+      com.docker.compose.project: "media_stack"
+      com.docker.compose.service: "prowlarr_nginx"
     restart_policy: unless-stopped
     state: started
 

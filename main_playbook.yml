@@ -27,7 +27,7 @@
     # - install_nextcloud
     # - install_immich
     # - install_syncthing
-    # - install_media_packages
-    - install_nginx_proxy_manager
+    - install_media_packages
+    # - install_nginx_proxy_manager
     # - cloudflare_tunnel
 
