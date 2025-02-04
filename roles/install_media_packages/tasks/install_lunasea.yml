@@ -20,7 +20,7 @@
 - name: Deploy Lunasea container
   docker_container:
     name: lunasea
-    image: ddsderek/lunasea:latest
+    image: ghcr.io/jagandeepbrar/lunasea:stable
     ports:
       - "8880:80"
     labels:
