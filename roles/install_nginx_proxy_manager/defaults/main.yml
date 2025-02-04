@@ -1,7 +1,7 @@
 ---
 ssl_cert_dir: "/etc/ssl/openssl/certs/"
 nginx_web_port: 81
-nginx_directory: "/tmp/nginx/"
+nginx_directory: "{{ base_storage_path }}/nginx/"
 portainer_port: 9000
 portainer_path: "/portainer/"
 immich_port: 2283

@@ -1,7 +1,11 @@
-syncthing_base_path: /tmp/syncthing
+ssl_cert_dir: "/etc/ssl/openssl/certs/"
+ip_address: "{{ vm_ip_address }}"
+
+syncthing_base_path: "{{ base_storage_path }}/syncthing"
 syncthing_data1: "{{ syncthing_base_path }}/data1"
 syncthing_data2: "{{ syncthing_base_path }}/data2"
 syncthing_config: "{{ syncthing_base_path }}/config"
+syncthing_nginx_config: "{{ syncthing_base_path }}/nginx"
 syncthing_port: 9002
 
 

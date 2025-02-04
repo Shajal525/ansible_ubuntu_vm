@@ -1,4 +1,4 @@
-homarr_base_path: /tmp/homarr
+homarr_base_path: "{{ base_storage_path }}/homarr"
 homarr_data: "{{ homarr_base_path }}/data"
 homarr_config: "{{ homarr_base_path }}/config"
 homarr_port: 9010

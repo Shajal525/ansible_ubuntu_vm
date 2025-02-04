@@ -1,0 +1,28 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create Syncthing directories
+  file:
+    path: "{{ watchtower_path }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+
+- name: Deploy Watchtower
+  docker_container:
+    name: watchtower
+    image: containrrr/watchtower
+    command: "0 0 4 * * *"
+    volumes:
+      - "{{ watchtower_path }}/docker.sock:/var/run/docker.sock"
+    restart_policy: always
+
+- name: Watchtower deployed
+  debug:
+    msg: "Watchtower is running successfully"
+

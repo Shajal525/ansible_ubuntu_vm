@@ -10,9 +10,9 @@ services:
       SECRET_ENCRYPTION_KEY: "{{ encryption_key.stdout }}"
     restart: unless-stopped
 
-  nginx_homarr:
+  homarr_nginx:
     image: nginx:latest
-    container_name: nginx_homarr
+    container_name: homarr_nginx
     volumes:
       - "{{ homarr_config }}/nginx.conf:/etc/nginx/nginx.conf"
       - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"

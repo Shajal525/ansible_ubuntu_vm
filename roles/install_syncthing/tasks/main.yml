@@ -14,8 +14,21 @@
     mode: "0755"
   loop:
     - "{{ syncthing_config }}"
+    - "{{ syncthing_nginx_config }}"
     - "{{ syncthing_data1 }}"
     - "{{ syncthing_data2 }}"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/nginx.conf.j2
+    dest: "{{ syncthing_nginx_config }}/nginx.conf"
+
+- name: Create internal Syncthing Docker network
+  docker_network:
+    name: syncthing_network
+    driver: bridge
+    state: present
+    scope: global
 
 - name: Deploy Syncthing container
   docker_container:
@@ -31,13 +44,38 @@
       - "{{ syncthing_data1 }}:/data1"
       - "{{ syncthing_data2 }}:/data2"
     ports:
-      - "{{ syncthing_port }}:8384"
+      - "8384:8384"
       - "22000:22000/tcp"
       - "22000:22000/udp"
       - "21027:21027/udp"
     labels:
       com.docker.compose.project: "syncthing_stack"
       com.docker.compose.service: "syncthing"
+    networks:
+      - name: syncthing_network
+    restart_policy: unless-stopped
+    state: started
+
+- name: Wait for Syncthing to be ready
+  wait_for:
+    port: 8384
+    timeout: 15
+
+- name: Start syncthing_nginx container
+  docker_container:
+    name: syncthing_nginx
+    image: nginx:latest
+    volumes:
+      - "{{ syncthing_nginx_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ syncthing_port }}:443"
+    labels:
+      com.docker.compose.project: "syncthing_stack"
+      com.docker.compose.service: "syncthing_nginx"
+    networks:
+      - name: syncthing_network
     restart_policy: unless-stopped
     state: started
 

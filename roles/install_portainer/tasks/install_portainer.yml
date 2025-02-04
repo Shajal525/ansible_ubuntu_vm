@@ -1,0 +1,64 @@
+---
+
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create Portainer directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ portainer_nginx_config }}"
+    - "{{ portainer_data }}"
+
+- name: Create Nginx config file from template
+  template:
+    src: templates/nginx.conf.j2
+    dest: "{{ portainer_nginx_config }}/nginx.conf"
+
+- name: Deploy Portainer
+  docker_container:
+    name: portainer
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ portainer_data }}:/data"
+    labels:
+      com.docker.compose.project: "portainer_stack"
+      com.docker.compose.service: "portainer"
+    restart_policy: always
+    state: started
+
+- name: Wait for Portainer to be ready
+  wait_for:
+    port: 9000
+    timeout: 15
+
+- name: Start portainer_nginx container
+  docker_container:
+    name: portainer_nginx
+    image: nginx:latest
+    volumes:
+      - "{{ portainer_nginx_config }}/nginx.conf:/etc/nginx/nginx.conf"
+      - "{{ ssl_cert_dir }}/server.crt:/etc/nginx/ssl/server.crt"
+      - "{{ ssl_cert_dir }}/server.key:/etc/nginx/ssl/server.key"
+    ports:
+      - "{{ portainer_port }}:443"
+    labels:
+      com.docker.compose.project: "portainer_stack"
+      com.docker.compose.service: "portainer_nginx"
+    restart_policy: unless-stopped
+    state: started
+
+- name: Portainer deployed
+  debug:
+    msg: "Portainer is running successfully"

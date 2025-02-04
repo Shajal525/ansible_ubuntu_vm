@@ -2,7 +2,7 @@ ssl_cert_dir: "/etc/ssl/openssl/certs"
 ip_address: "{{ vm_ip_address }}"
 
 immich_version: "release"
-immich_base_path: /tmp/immich
+immich_base_path: "{{ base_storage_path }}/immich"
 upload_location: "{{ immich_base_path }}/upload"
 db_data_location: "{{ immich_base_path }}/dbdata"
 immich_compose_dir: "{{ immich_base_path }}/compose"

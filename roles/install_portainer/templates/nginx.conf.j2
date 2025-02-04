@@ -1,0 +1,38 @@
+events {
+    worker_connections 1024;
+}
+
+http {
+    client_max_body_size 25G;
+
+    server {
+        listen 80;
+        server_name {{ ip_address }};
+        client_max_body_size 25G;
+
+        return 301 https://$host:$server_port$request_uri;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name {{ ip_address }};
+        client_max_body_size 25G;
+
+        ssl_certificate /etc/nginx/ssl/server.crt;
+        ssl_certificate_key /etc/nginx/ssl/server.key;
+
+        ssl_protocols TLSv1.2 TLSv1.3;
+        ssl_ciphers HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers on;
+
+        location / {
+            proxy_pass          http://{{ vm_ip_address }}:9000/;
+            proxy_set_header    Host               $http_host;
+            proxy_set_header    X-Real-IP          $remote_addr;
+            proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+            proxy_set_header    X-Forwarded-Proto  $scheme;
+        }
+        
+    }
+}
+

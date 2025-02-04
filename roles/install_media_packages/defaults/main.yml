@@ -1,7 +1,7 @@
 ssl_cert_dir: "/etc/ssl/openssl/certs"
 ip_address: "{{ vm_ip_address }}"
 
-media_base_path: "/tmp/media"
+media_base_path: "{{ base_storage_path }}/media"
 tvseries_path: "{{ media_base_path }}/tvseries"
 movies_path: "{{ media_base_path }}/movies"
 downloads_path: "{{ media_base_path }}/movies"

@@ -4,4 +4,5 @@ ssh_public_key: "{{ ssh_directory }}id_rsa.pub"
 ssh_key_path: "{{ ssh_directory }}id_rsa"
 ssh_port: 22
 shell: /bin/bash
+base_storage_path: "/tmp"
 

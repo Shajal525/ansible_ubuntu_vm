@@ -42,7 +42,7 @@
   register: homarr_running
   changed_when: false
 
-- name: Deploy Homarr with Redis using Docker Compose
+- name: Deploy Homarr Docker Compose
   shell: |
     docker-compose up -d
   args:
