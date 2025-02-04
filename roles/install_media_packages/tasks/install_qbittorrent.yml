@@ -41,6 +41,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "qbittorrent"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 
@@ -62,6 +64,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "qbittorrent_nginx"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 
@@ -70,7 +74,7 @@
     msg: "qBittorrent is running successfully"
     
 - name: Get log to see the password.
-  shell: docker logs qbittorrent | grep "password"
+  shell: docker logs qbittorrent | grep "password" || true
   changed_when: false
   register: qbittorrent_log
 

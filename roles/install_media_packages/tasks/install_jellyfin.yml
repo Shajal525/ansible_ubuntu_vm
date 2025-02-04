@@ -45,6 +45,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "jellyfin"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 
@@ -66,6 +68,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "jellyfin_nginx"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 

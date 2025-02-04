@@ -35,6 +35,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "prowlarr"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 
@@ -57,6 +59,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "prowlarr_nginx"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 

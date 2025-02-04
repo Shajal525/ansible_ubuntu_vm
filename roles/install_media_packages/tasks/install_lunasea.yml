@@ -26,6 +26,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "lunasea"
+    networks:
+      - name: media_network
     restart_policy: always
     tty: yes
     interactive: yes
@@ -49,6 +51,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "lunasea_nginx"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 

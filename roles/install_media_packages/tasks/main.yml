@@ -1,9 +1,10 @@
 ---
-# - include_tasks: install_qbittorrent.yml
+- include_tasks: create_docker_external_network.yml
+- include_tasks: install_qbittorrent.yml
 - include_tasks: install_nzbget.yml
-# - include_tasks: install_sonarr.yml
-# - include_tasks: install_radarr.yml
-# - include_tasks: install_prowlarr.yml
-# - include_tasks: install_lunasea.yml
-# - include_tasks: install_jellyfin.yml
+- include_tasks: install_sonarr.yml
+- include_tasks: install_radarr.yml
+- include_tasks: install_prowlarr.yml
+- include_tasks: install_lunasea.yml
+- include_tasks: install_jellyfin.yml
 

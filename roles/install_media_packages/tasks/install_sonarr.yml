@@ -40,6 +40,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "sonarr"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 
@@ -62,6 +64,8 @@
     labels:
       com.docker.compose.project: "media_stack"
       com.docker.compose.service: "sonarr_nginx"
+    networks:
+      - name: media_network
     restart_policy: unless-stopped
     state: started
 
