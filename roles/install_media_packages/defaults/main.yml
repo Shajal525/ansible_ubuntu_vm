@@ -27,6 +27,12 @@ qbittorrent_config: "{{ config_path }}/qbittorrent"
 qbittorrent_nginx_config: "{{ config_path }}/nginx_qbittorrent"
 qbittorrent_webui_port: 9055
 
+nzbget_config: "{{ config_path }}/nzbget"
+nzbget_nginx_config: "{{ config_path }}/nginx_nzbget"
+nzbget_port: 9054
+nzbget_username: "{{ vm_username }}"
+nzbget_password: "{{ vm_password }}"
+
 lunasea_nginx_config: "{{ config_path }}/nginx_lunasea"
 lunasea_port: 9060
 
