@@ -1,15 +1,15 @@
 ---
 # - name: Update and generate SSL files
-#   hosts: nasvm
+#   hosts: pvehomelab
 #   become: true
 #   gather_facts: false
 
 #   roles:
-#     # - basics
+#     - basics
 #     - openssl_generate_certificate
 
 # - name: Install docker
-#   hosts: nasvm
+#   hosts: pvehomelab
 #   become: true
 #   gather_facts: yes
 
@@ -17,16 +17,16 @@
 #     - docker
 
 - name: Install Portainer, Nextcloud, Nginx
-  hosts: nasvm
+  hosts: pvehomelab
   become: true
   gather_facts: false
 
   roles:
-    - install_homarr
+    # - install_homarr
     # - install_portainer
     # - install_nextcloud
     # - install_immich
     # - install_syncthing
     # - install_media_packages
-    # - cloudflare_tunnel
+    - cloudflare_tunnel
 

@@ -5,11 +5,10 @@
     state: directory
     mode: '0755'
 
-- name: Ensure password file exists with secure permissions
-  file:
-    path: "{{ password_file }}"
-    state: touch
-  changed_when: false
+- name: Create password file with password
+  copy:
+    dest: "{{ password_file }}"
+    content: "{{ cert_password }}"
 
 - name: Generate Encrypted CA Private Key (AES-256)
   shell: |

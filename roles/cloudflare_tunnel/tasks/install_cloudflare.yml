@@ -52,3 +52,8 @@
     msg: "Cloudflared installation was not successful."
   when: cloudflared_check.rc != 0
 
+- name: Need to login
+  pause:
+    prompt: "Run `sudo cloudflared tunnel login` in terminal. This will show an URL. Visit the URL and authenticate. Don't miss sudo"
+    seconds: 60
+

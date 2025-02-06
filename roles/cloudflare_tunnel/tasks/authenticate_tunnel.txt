@@ -1,5 +1,5 @@
 Run "cloudflared tunnel login" command
-shell: "cloudflared tunnel login"
+shell: "sudo cloudflared tunnel login"
 This will give an URL.
 Visit the URL and authenticate.
 

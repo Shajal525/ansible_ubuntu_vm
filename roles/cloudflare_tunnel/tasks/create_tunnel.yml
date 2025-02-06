@@ -1,6 +1,6 @@
 ---
 - name: Check if the tunnel already exists
-  command: cloudflared tunnel list
+  shell: cloudflared tunnel list
   changed_when: false
   register: tunnel_list_output
 
@@ -9,7 +9,7 @@
     tunnel_exists: "{{ tunnel_name in tunnel_list_output.stdout }}"
 
 - name: Run cloudflared tunnel create command
-  command: cloudflared tunnel create {{ tunnel_name }}
+  shell: cloudflared tunnel create {{ tunnel_name }}
   register: tunnel_create_output
   changed_when: true
   when: not tunnel_exists
@@ -24,7 +24,7 @@
   when: not tunnel_exists
 
 - name: Get tunnel list
-  command: cloudflared tunnel list
+  shell: cloudflared tunnel list
   register: tunnel_list_output
   changed_when: false
 
@@ -51,7 +51,7 @@
 
 - name: Create config file with tunnel UUID and json file path
   copy:
-    dest: /root/.cloudflared/config.yml
+    dest: /etc/cloudflared/config.yml
     content: |
       tunnel: {{ tunnel_id }}
       credentials-file: {{ tunnel_json_file }}
@@ -68,10 +68,10 @@
         - service: http_status:404
 
 - name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }} command"
-  command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }}
+  shell: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname1 }}
 
 - name: "Run cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }} command"
-  command: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }}
+  shell: cloudflared tunnel route dns {{ tunnel_name }} {{ hostname2 }}
 
 - name: Check if cloudflared service file exists
   stat:
@@ -89,15 +89,15 @@
   when: not service_file_status.stat.exists
 
 - name: Run daemon-reload
-  command: systemctl daemon-reload
+  shell: systemctl daemon-reload
   when: not service_file_status.stat.exists
 
 - name: Run cloudflared service install if not already installed
-  command: cloudflared service install
+  shell: cloudflared service install
   when: not service_file_status.stat.exists
 
 - name: Run cloudflared tunnel run as serrvice
-  command: systemctl restart cloudflared
+  shell: systemctl restart cloudflared
   changed_when: true
   when: service_file_status.stat.exists
 

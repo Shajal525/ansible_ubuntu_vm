@@ -14,3 +14,5 @@ server_validity_days: 3650
 server_cn: "shajalslab"
 server_dns_names: "{{ server_dns_names }}"
 server_ip_addresses: "{{ server_ip_addresses }}"
+cert_password: "{{ vm_password }}"
+

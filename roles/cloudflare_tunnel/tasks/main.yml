@@ -1,4 +1,4 @@
 ---
-# - include_tasks: install_cloudflare.yml
+- include_tasks: install_cloudflare.yml
 # follow authenticate_tunnel.txt
 - include_tasks: create_tunnel.yml
