@@ -74,6 +74,11 @@
     labels:
       com.docker.compose.project: "syncthing_stack"
       com.docker.compose.service: "syncthing_nginx"
+      tsdproxy.enable: "true"
+      tsdproxy.name: "syncthing"
+      tsdproxy.scheme: "https"
+      tsdproxy.tlsvalidate: "false"
+      tsdproxy.container_port: "{{ syncthing_port | string }}"
     networks:
       - name: syncthing_network
     restart_policy: unless-stopped

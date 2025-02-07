@@ -1,0 +1,10 @@
+tailscale_base_path: "{{ base_storage_path }}/tailscale2"
+tailscale_config_path: "{{ tailscale_base_path }}/config"
+
+# get auth key from headscale server
+# commands: 1. "headscale create user example" 2. "headscale --user example preauthkeys create --expiration 1h"
+tailscale_auth_key: "b1733dd6629e54eeae89fc8c9372fd7eadc7ced972ff3293" 
+
+tailscale_headscale_sarver: "http://192.168.1.5:8080"
+tailscale_allowed_ips: "192.168.1.4/24"
+

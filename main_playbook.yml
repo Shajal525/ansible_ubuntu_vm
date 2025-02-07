@@ -22,11 +22,12 @@
   gather_facts: false
 
   roles:
+    # - install_tsdproxy_tailscale
     # - install_homarr
     # - install_portainer
     # - install_nextcloud
     # - install_immich
-    # - install_syncthing
+    - install_syncthing
     # - install_media_packages
-    - cloudflare_tunnel
+    # - cloudflare_tunnel
 

@@ -1,0 +1,51 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create TSDproxy directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ tsdproxy_base_path }}"
+    - "{{ tsdproxy_config_path }}"
+    - "{{ tsdproxy_data_path }}"
+
+- name: Start TSDproxy container
+  docker_container:
+    name: tsdproxy
+    image: almeidapaulopt/tsdproxy:latest
+    hostname: tsdproxy
+    env:
+      TSDPROXY_AUTHKEY: "{{ tsdproxy_auth_key }}"
+      TSDPROXY_HOSTNAME: "192.168.1.4"
+      DOCKER_HOST: "unix:///var/run/docker.sock"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "{{ tsdproxy_data_path }}:/data"
+      - "{{ tsdproxy_config_path }}:/config"
+    labels:
+      com.docker.compose.project: "tsdproxy_stack"
+      com.docker.compose.service: "tsdproxy"
+      tsdproxy.enable: "true"
+      tsdproxy.name: "tsdproxy"
+    restart_policy: unless-stopped
+    state: started
+
+- name: TSDproxy deployed
+  debug:
+    msg: "TSDproxy is running successfully"
+
+### Add these values in nginx docker
+# labels:
+#   tsdproxy.enable: "true"
+#   tsdproxy.name: "syncthing"
+#   tsdproxy.scheme: "https"
+#   tsdproxy.tlsvalidate: "false"
+#   tsdproxy.container_port: "{{ syncthing_port | string }}"

@@ -1,0 +1,43 @@
+---
+- name: Ensure Docker service is running
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create Tailscale directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+  loop:
+    - "{{ tailscale_base_path }}"
+    - "{{ tailscale_config_path }}"
+
+- name: Start tailscale-nginx container
+  docker_container:
+    name: tailscale
+    image: tailscale/tailscale:latest
+    hostname: tailscale
+    env:
+      TS_STATE_DIR: "/var/lib/tailscale"
+      TS_EXTRA_ARGS: "--login-server={{ tailscale_headscale_sarver }} --advertise-exit-node --accept-dns=true"
+      TS_AUTHKEY: "{{ tailscale_auth_key }}"
+    volumes:
+      - "{{ tailscale_base_path }}:/var/lib/tailscale"
+      - "{{ tailscale_config_path }}:/dev/net/tun"
+    capabilities:
+      - NET_ADMIN
+      - NET_RAW
+    labels:
+      com.docker.compose.project: "tailscale_stack"
+      com.docker.compose.service: "tailscale"
+    network_mode: "host"
+    restart_policy: unless-stopped
+    state: started
+
+- name: Tailscale deployed
+  debug:
+    msg: "Tailscale is running successfully"

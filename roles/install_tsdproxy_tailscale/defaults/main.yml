@@ -1,0 +1,9 @@
+tsdproxy_base_path: "{{ base_storage_path }}/tsdproxy"
+tsdproxy_data_path: "{{ tsdproxy_base_path }}/data"
+tsdproxy_config_path: "{{ tsdproxy_base_path }}/config"
+
+tsdproxy_auth_key: "tskey-auth-k3LF3SJ4X611CNTRL-fVJKtWKTf2QjuAkhdabE3QnqyyosqBKc" 
+
+tsdproxy_headscale_sarver: "http://192.168.1.5:8080"
+tsdproxy_allowed_ips: "192.168.1.4/24"
+
